@@ -7,7 +7,7 @@ public class IntSolution implements Iterable<Integer>
 {
 	protected ArrayList<Integer> solution;
 	
-	public IntSolution(StateConstraint constraint)
+	public IntSolution()
 	{
 		this.solution = new ArrayList<Integer>();
 	}

@@ -3,12 +3,16 @@ package com.ml.toolbox.salesman;
 import java.util.ArrayList;
 import java.util.Random;
 
+import com.ml.toolbox.model.OrderSolution;
+import com.ml.toolbox.model.Population;
+
 public class TravelingSalesmanProblem
 {
 	private ArrayList<Location> locations;
 	private int x, y;
 	private int numLocations;
 	private Random rand;
+	private Population population;
 	
 	public TravelingSalesmanProblem(int numLocations, int x, int y)
 	{
@@ -18,19 +22,25 @@ public class TravelingSalesmanProblem
 		this.numLocations = numLocations;
 		rand = new Random();
 		
-		for (int i = 0; i < numLocations; i++) {
+		for (int i = 0; i < numLocations; i++)
+		{
 			locations.add(new Location(rand.nextInt(x), rand.nextInt(y)));
 		}
+		
+		this.population = new Population(numLocations, 100, .1);
 	}
 	
 	public double evaluate(int[] solution)
 	{
-		if (solution.length != numLocations) {
+		if (solution.length != numLocations)
+		{
 			return -1;
-		} else {
+		} else
+		{
 			double cost = 0;
 			
-			for (int i = 1; i < numLocations; i++) {
+			for (int i = 1; i < numLocations; i++)
+			{
 				Location from = locations.get(solution[i - 1]);
 				Location to = locations.get(solution[i]);
 				cost += from.distanceTo(to);
@@ -39,12 +49,30 @@ public class TravelingSalesmanProblem
 		}
 	}
 	
+	public void evaluate(OrderSolution orderSolution)
+	{
+		double cost = 0;
+		
+		ArrayList<Integer> solution = orderSolution.toOrderedList();
+		
+		for (int i = 1; i < numLocations; i++)
+		{
+			
+			Location from = locations.get(solution.get(i - 1) - 1);
+			Location to = locations.get(solution.get(i) - 1);
+			cost += from.distanceTo(to);
+		}
+		
+		orderSolution.setScore(cost);
+	}
+	
 	@Override
 	public String toString()
 	{
 		String build = "";
 		
-		for (Location location : locations) {
+		for (Location location : locations)
+		{
 			build += location.toString() + " ";
 		}
 		
@@ -55,11 +83,13 @@ public class TravelingSalesmanProblem
 	{
 		int[] build = new int[numLocations];
 		
-		for (int i = 0; i < numLocations; i++) {
+		for (int i = 0; i < numLocations; i++)
+		{
 			build[i] = i;
 		}
 		
-		for (int i = 0; i < numLocations; i++) {
+		for (int i = 0; i < numLocations; i++)
+		{
 			
 			// SWAP
 			
@@ -80,9 +110,11 @@ public class TravelingSalesmanProblem
 	public String solutionToString(int[] solution)
 	{
 		String build = "[";
-		for (int i = 0; i < solution.length; i++) {
+		for (int i = 0; i < solution.length; i++)
+		{
 			build += solution[i];
-			if (i < solution.length - 1) {
+			if (i < solution.length - 1)
+			{
 				build += ",";
 			}
 		}
@@ -100,7 +132,8 @@ public class TravelingSalesmanProblem
 	{
 		int[] clone = new int[solution.length];
 		
-		for (int i = 0; i < solution.length; i++) {
+		for (int i = 0; i < solution.length; i++)
+		{
 			clone[i] = solution[i];
 		}
 		return swapRandom(clone);
@@ -127,20 +160,46 @@ public class TravelingSalesmanProblem
 		double cost = evaluate(solution);
 		System.out.print(solutionToString(solution) + " Cost : " + evaluate(solution));
 		
-		while (cost > 50 && itt < 500) {
+		while (cost > 50 && itt < 500)
+		{
 			int[] newSolution = swapRandomClone(solution);
 			
 			double newCost = evaluate(newSolution);
 			
-			if (newCost < cost) {
+			if (newCost < cost)
+			{
 				solution = newSolution;
 				cost = newCost;
 				System.out.println("new solution : " + solutionToString(solution) + " Cost : " + cost);
-			} else {
+			} else
+			{
 				System.out.print(".");
 			}
 			itt++;
 		}
 		
 	}
+	
+	public void geneticPopulationSolution()
+	{
+		System.out.println("problem : " + this.toString());
+		runItterations(100);
+		
+	}
+	
+	public void runItterations(int itterations)
+	{
+		while (population.getGeneration() < itterations)
+		{
+			System.out.println(population.toString());
+			
+			for (OrderSolution solution : population)
+			{
+				evaluate(solution);
+			}
+			
+			population.update();
+		}
+	}
+	
 }
