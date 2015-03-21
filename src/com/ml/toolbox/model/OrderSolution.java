@@ -45,9 +45,23 @@ public class OrderSolution implements Iterable<Integer>, Comparable
 		initialize();
 	}
 	
+	public OrderSolution(OrderSolution clone)
+	{
+		int[] oldPerm = clone.getPermutations();
+		
+		this.permutations = new int[oldPerm.length];
+		
+		for (int i = 0; i < permutations.length; i++)
+		{
+			permutations[i] = oldPerm[i];
+		}
+		
+		initialize();
+	}
+	
 	private void initialize()
 	{
-		this.score = -1;
+		this.score = Double.MAX_VALUE;
 	}
 	
 	public ArrayList<Integer> toOrderedList()
@@ -198,6 +212,11 @@ public class OrderSolution implements Iterable<Integer>, Comparable
 		}
 		
 		return 0;
+	}
+	
+	public OrderSolution deepCopy()
+	{
+		return new OrderSolution(this);
 	}
 	
 }

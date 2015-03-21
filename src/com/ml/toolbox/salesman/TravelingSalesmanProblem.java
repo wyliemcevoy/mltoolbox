@@ -24,10 +24,34 @@ public class TravelingSalesmanProblem
 		
 		for (int i = 0; i < numLocations; i++)
 		{
-			locations.add(new Location(rand.nextInt(x), rand.nextInt(y)));
+			int nX = 10;
+			int nY = 10;
+			
+			if (rand.nextBoolean())
+			{
+				nX = rand.nextInt(x / 10);
+				nY = rand.nextInt(y);
+				
+				if (rand.nextBoolean())
+				{
+					nX += x * 9 / 10;
+				}
+				
+			} else
+			{
+				nX = rand.nextInt(x);
+				nY = rand.nextInt(y / 10);
+				
+				if (rand.nextBoolean())
+				{
+					nY += y * 9 / 10;
+				}
+			}
+			
+			locations.add(new Location(nX, nY));
 		}
 		
-		this.population = new Population(numLocations, 100, .1);
+		this.population = new Population(numLocations, 500, .1);
 	}
 	
 	public double evaluate(int[] solution)
@@ -184,15 +208,17 @@ public class TravelingSalesmanProblem
 	{
 		System.out.println("problem : " + this.toString());
 		
-		this.population = new Population(numLocations, 100, .1);
+		this.population = new Population(numLocations, 500, .1);
 		
 		runItterations(1000);
-		return population.getMostFit();
+		return population.getBestEver();
 	}
 	
 	public void runItterations(int itterations)
 	{
-		while (population.getGeneration() < itterations)
+		boolean equilibrium = false;
+		
+		while (!equilibrium && population.getGeneration() < itterations)
 		{
 			System.out.println(population.toString());
 			
@@ -204,6 +230,8 @@ public class TravelingSalesmanProblem
 			}
 			//population.showRandomSample(20);
 			population.endStep();
+			
+			equilibrium = population.getMostFit().getScore() == population.getAverageScore();
 		}
 	}
 	

@@ -15,8 +15,9 @@ public class Population implements Iterable<OrderSolution>
 	private int generation;
 	private OrderSolution mostFit;
 	private double averageFitness;
-	private double mutationRate = .2;
+	private double mutationRate = .6;
 	private double imigrationRate = 100;
+	private OrderSolution bestEver;
 	
 	class CustomComparator implements Comparator<OrderSolution>
 	{
@@ -40,6 +41,8 @@ public class Population implements Iterable<OrderSolution>
 			solution.randomize();
 			solutions.add(solution);
 		}
+		this.bestEver = solutions.get(0);
+		
 	}
 	
 	public void populationStep()
@@ -59,6 +62,11 @@ public class Population implements Iterable<OrderSolution>
 		}
 		solutions.addAll(progeny);
 		
+		for (int i = 0; i < 1; i++)
+		{
+			solutions.add(bestEver.deepCopy());
+		}
+		
 		// Mutate step
 		for (OrderSolution solution : solutions)
 		{
@@ -66,7 +74,11 @@ public class Population implements Iterable<OrderSolution>
 			if (rand.nextInt(101) / 100.0 < mutationRate)
 			{
 				mutations++;
-				solution.mutate(rand.nextInt(numAttributes - 1), 5 - rand.nextInt(10));
+				
+				for (int i = 0; i < rand.nextInt(numAttributes); i++)
+				{
+					solution.mutate(rand.nextInt(numAttributes - 1), 5 - rand.nextInt(10));
+				}
 			}
 		}
 		
@@ -78,8 +90,17 @@ public class Population implements Iterable<OrderSolution>
 	{
 		
 		sort();
-		cullTheWeak();
+		Random rand = new Random(System.currentTimeMillis());
+		if (solutions.size() > 4 * populationSize || rand.nextBoolean())
+		{
+			cullTheWeak();
+		}
 		mostFit = solutions.get(0);
+		
+		if (mostFit.score < bestEver.score)
+		{
+			bestEver = mostFit;
+		}
 		
 		averageFitness = 0;
 		
@@ -177,6 +198,16 @@ public class Population implements Iterable<OrderSolution>
 		{
 			System.out.println("\t" + solutions.get(rand.nextInt(solutions.size())));
 		}
+	}
+	
+	public OrderSolution getBestEver()
+	{
+		return bestEver;
+	}
+	
+	public double getAverageScore()
+	{
+		return averageFitness;
 	}
 	
 }
