@@ -169,16 +169,13 @@ public class OrderSolution implements Iterable<Integer>, Comparable
 	public void mutate(int index, int delta)
 	{
 		int value = permutations[index];
+		int v = value;
 		
 		value += delta;
 		
-		value = Math.min(Math.max(0, 0), 1);
+		value = Math.min(Math.max(value, 0), index);
 		
-		if (value > index)
-		{
-			
-		}
-		
+		permutations[index] = value;
 	}
 	
 	@Override

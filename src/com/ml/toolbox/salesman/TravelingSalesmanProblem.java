@@ -20,7 +20,7 @@ public class TravelingSalesmanProblem
 		this.x = x;
 		this.y = y;
 		this.numLocations = numLocations;
-		rand = new Random();
+		rand = new Random(System.currentTimeMillis());
 		
 		for (int i = 0; i < numLocations; i++)
 		{
@@ -180,11 +180,14 @@ public class TravelingSalesmanProblem
 		
 	}
 	
-	public void geneticPopulationSolution()
+	public OrderSolution geneticPopulationSolution()
 	{
 		System.out.println("problem : " + this.toString());
-		runItterations(100);
 		
+		this.population = new Population(numLocations, 100, .1);
+		
+		runItterations(1000);
+		return population.getMostFit();
 	}
 	
 	public void runItterations(int itterations)
@@ -193,13 +196,20 @@ public class TravelingSalesmanProblem
 		{
 			System.out.println(population.toString());
 			
+			population.populationStep();
+			
 			for (OrderSolution solution : population)
 			{
 				evaluate(solution);
 			}
-			
-			population.update();
+			//population.showRandomSample(20);
+			population.endStep();
 		}
+	}
+	
+	public ArrayList<Location> getLocations()
+	{
+		return locations;
 	}
 	
 }

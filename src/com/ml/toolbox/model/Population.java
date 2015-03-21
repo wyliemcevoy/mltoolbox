@@ -15,7 +15,8 @@ public class Population implements Iterable<OrderSolution>
 	private int generation;
 	private OrderSolution mostFit;
 	private double averageFitness;
-	private double mutationRate;
+	private double mutationRate = .2;
+	private double imigrationRate = 100;
 	
 	class CustomComparator implements Comparator<OrderSolution>
 	{
@@ -41,24 +42,43 @@ public class Population implements Iterable<OrderSolution>
 		}
 	}
 	
-	public void update()
+	public void populationStep()
 	{
 		generation++;
-		
+		int mutations = 0;
 		Random rand = new Random(System.currentTimeMillis());
 		ArrayList<OrderSolution> progeny = new ArrayList<OrderSolution>();
+		imigration();
 		
-		for (int i = 0; i < solutions.size() - 1; i += 2)
+		for (int i = 0; i < solutions.size() / 2; i++)
 		{
 			OrderSolution male = solutions.get(i);
-			OrderSolution female = solutions.get(i + 1);
+			OrderSolution female = solutions.get(rand.nextInt(solutions.size()));
 			
 			progeny.addAll(male.mate(rand.nextInt(numAttributes), female));
 		}
 		solutions.addAll(progeny);
 		
-		sort();
+		// Mutate step
+		for (OrderSolution solution : solutions)
+		{
+			
+			if (rand.nextInt(101) / 100.0 < mutationRate)
+			{
+				mutations++;
+				solution.mutate(rand.nextInt(numAttributes - 1), 5 - rand.nextInt(10));
+			}
+		}
 		
+		//System.out.println("total mutations : " + mutations);
+		
+	}
+	
+	public void endStep()
+	{
+		
+		sort();
+		cullTheWeak();
 		mostFit = solutions.get(0);
 		
 		averageFitness = 0;
@@ -70,20 +90,16 @@ public class Population implements Iterable<OrderSolution>
 		
 		averageFitness /= solutions.size();
 		
-		// Individuals create more children based on their fitness score
-		
-		// Purge under performing individuals
-		
-		// Mutate step
-		for (OrderSolution solution : solutions)
+	}
+	
+	private void imigration()
+	{
+		for (int i = 0; i < imigrationRate; i++)
 		{
-			if (rand.nextInt(100) / 100 < mutationRate)
-			{
-				//solution.mutate(rand.nextInt(numAttributes - 1));
-			}
+			OrderSolution solution = new OrderSolution(numAttributes);
+			solution.randomize();
+			solutions.add(solution);
 		}
-		
-		cullTheWeak();
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -152,4 +168,15 @@ public class Population implements Iterable<OrderSolution>
 	{
 		return "Population [gen = " + generation + ", mostFit = " + mostFit + ", average = " + ((int) averageFitness) + " size = " + solutions.size() + "]";
 	}
+	
+	public void showRandomSample(int size)
+	{
+		Random rand = new Random(System.currentTimeMillis());
+		
+		for (int i = 0; i < size; i++)
+		{
+			System.out.println("\t" + solutions.get(rand.nextInt(solutions.size())));
+		}
+	}
+	
 }
