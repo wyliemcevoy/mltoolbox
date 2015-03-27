@@ -18,6 +18,7 @@ public class Population implements Iterable<OrderSolution>
 	private double mutationRate = .6;
 	private double imigrationRate = 100;
 	private OrderSolution bestEver;
+	private boolean verbose = false;
 	
 	class CustomComparator implements Comparator<OrderSolution>
 	{
@@ -187,7 +188,18 @@ public class Population implements Iterable<OrderSolution>
 	@Override
 	public String toString()
 	{
-		return "Population [gen = " + generation + ", mostFit = " + mostFit + ", average = " + ((int) averageFitness) + " size = " + solutions.size() + "]";
+		if (verbose)
+		{
+			return "Population [gen = " + generation + ", mostFit = " + mostFit + ", average = " + ((int) averageFitness) + " size = " + solutions.size() + "]";
+		} else
+		
+		if (mostFit != null)
+		{
+			return "Population [gen = " + generation + " best score = " + (int) mostFit.getScore() + ", average = " + ((int) averageFitness);
+		} else
+		{
+			return "uninitialized populatin";
+		}
 	}
 	
 	public void showRandomSample(int size)
