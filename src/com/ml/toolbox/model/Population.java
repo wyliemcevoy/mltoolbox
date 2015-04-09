@@ -11,7 +11,6 @@ public class Population implements Iterable<OrderSolution>
 	private ArrayList<OrderSolution> solutions;
 	private int numAttributes;
 	private int populationSize;
-	private int deathThreshold;
 	private int generation;
 	private OrderSolution mostFit;
 	private double averageFitness;
@@ -49,7 +48,6 @@ public class Population implements Iterable<OrderSolution>
 	public void populationStep()
 	{
 		generation++;
-		int mutations = 0;
 		Random rand = new Random(System.currentTimeMillis());
 		ArrayList<OrderSolution> progeny = new ArrayList<OrderSolution>();
 		imigration();
@@ -74,7 +72,6 @@ public class Population implements Iterable<OrderSolution>
 			
 			if (rand.nextInt(101) / 100.0 < mutationRate)
 			{
-				mutations++;
 				
 				for (int i = 0; i < rand.nextInt(numAttributes); i++)
 				{
@@ -82,9 +79,6 @@ public class Population implements Iterable<OrderSolution>
 				}
 			}
 		}
-		
-		//System.out.println("total mutations : " + mutations);
-		
 	}
 	
 	public void endStep()

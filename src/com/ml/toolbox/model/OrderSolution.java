@@ -9,6 +9,8 @@ public class OrderSolution implements Iterable<Integer>, Comparable
 {
 	protected int[] permutations;
 	
+	protected ArrayList<Integer> solution;
+	
 	/**
 	 * @return the score
 	 */
@@ -37,6 +39,18 @@ public class OrderSolution implements Iterable<Integer>, Comparable
 			permutations[i] = i + 1;
 		}
 		initialize();
+	}
+	
+	private int[] arrayListToPerm(ArrayList<Integer> list)
+	{
+		int[] perms = new int[list.size() - 1];
+		
+		for (int i = 0; i < list.size(); i++)
+		{
+			
+		}
+		
+		return perms;
 	}
 	
 	public OrderSolution(int[] permutations)
@@ -212,6 +226,63 @@ public class OrderSolution implements Iterable<Integer>, Comparable
 		}
 		
 		return 0;
+	}
+	
+	public void cutAndDisplace(int startB, int startC, CutStrategy strategy)
+	{
+		ArrayList<Integer> list = this.toOrderedList();
+		
+		ArrayList<Integer> a = new ArrayList<Integer>();
+		ArrayList<Integer> b = new ArrayList<Integer>();
+		ArrayList<Integer> c = new ArrayList<Integer>();
+		
+		for (int i = 0; i < list.size(); i++)
+		{
+			if (i < startB)
+			{
+				a.add(list.get(i));
+			} else if (i < startC)
+			{
+				b.add(list.get(i));
+			} else
+			{
+				c.add(list.get(i));
+			}
+		}
+		
+		ArrayList<Integer> result = new ArrayList<Integer>();
+		
+		switch (strategy)
+		{
+			case acb:
+				result.addAll(a);
+				result.addAll(c);
+				result.addAll(b);
+				break;
+			case bac:
+				result.addAll(b);
+				result.addAll(a);
+				result.addAll(c);
+				break;
+			case bca:
+				result.addAll(b);
+				result.addAll(c);
+				result.addAll(a);
+				break;
+			case cab:
+				result.addAll(c);
+				result.addAll(a);
+				result.addAll(b);
+				break;
+			case cba:
+				result.addAll(c);
+				result.addAll(b);
+				result.addAll(a);
+				break;
+			default:
+				break;
+		}
+		
 	}
 	
 	public OrderSolution deepCopy()
