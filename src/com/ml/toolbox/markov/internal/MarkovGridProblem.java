@@ -10,10 +10,6 @@ public class MarkovGridProblem implements MarkovProblem
 	private int width = 5;
 	private int height = 6;
 	
-	private enum Direction {
-		up, down, left, right
-	}
-	
 	public MarkovGridProblem()
 	{
 		
@@ -25,38 +21,41 @@ public class MarkovGridProblem implements MarkovProblem
 		this.states = new ArrayList<MarkovState>();
 		this.grid = new MarkovState[6][5];
 		
-		for (int i = 0; i < height; i++)
+		for (int y = 0; y < height; y++)
 		{
-			for (int j = 0; j < width; j++)
+			for (int x = 0; x < width; x++)
 			{
-				grid[i][j] = new MarkovState(0);
-				states.add(grid[i][j]);
+				grid[y][x] = new MarkovState(0);
+				states.add(grid[y][x]);
 			}
 		}
 		
-		grid[6][5].setTerminal(true);
-		grid[6][5].setValue(100);
-		grid[5][5].setTerminal(true);
-		grid[5][5].setValue(-100);
+		grid[5][4].setTerminal(true);
+		grid[5][4].setValue(-100);
+		grid[4][4].setTerminal(true);
+		grid[4][4].setValue(100);
 		
 		intializeActions();
 	}
 	
 	private void intializeActions()
 	{
-		for (int i = 0; i < height; i++)
+		for (int y = 0; y < height; y++)
 		{
-			for (int j = 0; j < width; j++)
+			for (int x = 0; x < width; x++)
 			{
-				createActions(j, i);
+				createActions(x, y);
 			}
 		}
 	}
 	
-	private void createActions(int j, int i)
+	private void createActions(int x, int y)
 	{
-		grid[j][i].addAction(createAction(Direction.up, j, i));
-		
+		MarkovState state = get(x, y);
+		state.addAction(createAction(Direction.up, x, y));
+		state.addAction(createAction(Direction.down, x, y));
+		state.addAction(createAction(Direction.left, x, y));
+		state.addAction(createAction(Direction.right, x, y));
 	}
 	
 	@Override
@@ -71,55 +70,109 @@ public class MarkovGridProblem implements MarkovProblem
 		return states;
 	}
 	
-	private MarkovGridAction createAction(Direction direction, int j, int i)
+	private MarkovGridAction createAction(Direction direction, int x, int y)
 	{
 		MarkovGridAction action = new MarkovGridAction();
+		
+		MarkovActionResult up = new MarkovActionResult(get(x + 1, y));
+		MarkovActionResult down = new MarkovActionResult(get(x - 1, y));
+		MarkovActionResult left = new MarkovActionResult(get(x, y - 1));
+		MarkovActionResult right = new MarkovActionResult(get(x, y - 1));
+		
 		switch (direction)
 		{
 			case down:
-				
 				// go down
-				MarkovActionResult down = new MarkovActionResult(get(j - 1, i));
 				down.setProbability(.8);
 				action.addPossible(down);
 				
 				// go left
-				MarkovActionResult left = new MarkovActionResult(get(j - 1, i));
-				down.setProbability(.1);
+				left.setProbability(.1);
 				action.addPossible(left);
+				
 				// go right
-				MarkovActionResult right = new MarkovActionResult(get(j - 1, i));
-				down.setProbability(.1);
+				right.setProbability(.1);
 				action.addPossible(right);
 				
 				break;
 			case left:
+				
+				// go left
+				left.setProbability(.8);
+				action.addPossible(left);
+				
+				// go up
+				up.setProbability(.1);
+				action.addPossible(up);
+				
+				// go down
+				down.setProbability(.1);
+				action.addPossible(down);
+				
 				break;
 			case right:
+				// go right
+				right.setProbability(.8);
+				action.addPossible(right);
+				
+				// go up
+				up.setProbability(.1);
+				action.addPossible(up);
+				
+				// go down
+				down.setProbability(.1);
+				action.addPossible(down);
+				
 				break;
 			case up:
+				// go down
+				up.setProbability(.8);
+				action.addPossible(up);
+				
+				// go left
+				left.setProbability(.1);
+				action.addPossible(left);
+				
+				// go right
+				right.setProbability(.1);
+				action.addPossible(right);
+				
 				break;
 			default:
 				break;
-		
 		}
 		
 		return action;
 	}
 	
-	private MarkovState get(int j, int i)
+	private MarkovState get(int x, int y)
 	{
-		return grid[sanatizeY(j)][sanatizeX(i)];
+		return grid[sanatizeY(y)][sanatizeX(x)];
 	}
 	
-	private int sanatizeX(int i)
+	private int sanatizeX(int x)
 	{
-		return Math.max(Math.min(i, width), 0);
+		return Math.max(Math.min(x, width - 1), 0);
 	}
 	
-	private int sanatizeY(int j)
+	private int sanatizeY(int y)
 	{
-		return Math.max(Math.min(j, height), 0);
+		return Math.max(Math.min(y, height - 1), 0);
 		
+	}
+	
+	@Override
+	public String toString()
+	{
+		String build = "";
+		for (int y = 0; y < height; y++)
+		{
+			for (int x = 0; x < width; x++)
+			{
+				build += ((int) get(x, y).getValue()) + " ";
+			}
+			build += "\n";
+		}
+		return build;
 	}
 }

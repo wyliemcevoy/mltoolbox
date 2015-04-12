@@ -1,5 +1,6 @@
 package com.ml.toolbox;
 
+import com.ml.toolbox.markov.internal.MarkovGridProblem;
 
 public class Main
 {
@@ -7,17 +8,9 @@ public class Main
 	public static void main(String[] args)
 	{
 		
-		int[][] arr = new int[5][6];
+		MarkovGridProblem p = new MarkovGridProblem();
 		
-		for (int y = 0; y < 5; y++)
-		{
-			for (int x = 0; x < 6; x++)
-			{
-				arr[y][x] = y;
-				System.out.print(y + " ");
-			}
-			System.out.println();
-		}
+		System.out.println(p);
 		
 		/*
 		TravelingSalesmanProblem problem = new TravelingSalesmanProblem(100, 500, 500);

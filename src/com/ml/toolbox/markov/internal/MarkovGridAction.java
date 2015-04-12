@@ -15,8 +15,7 @@ public class MarkovGridAction implements MarkovAction
 	@Override
 	public List<MarkovActionResult> getPossibleResults()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return results;
 	}
 	
 	@Override
