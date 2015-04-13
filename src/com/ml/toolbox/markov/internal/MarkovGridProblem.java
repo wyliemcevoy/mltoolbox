@@ -19,7 +19,7 @@ public class MarkovGridProblem implements MarkovProblem
 	private void intializeGrid()
 	{
 		this.states = new ArrayList<MarkovState>();
-		this.grid = new MarkovState[6][5];
+		this.grid = new MarkovState[height][width];
 		
 		for (int y = 0; y < height; y++)
 		{
@@ -32,8 +32,8 @@ public class MarkovGridProblem implements MarkovProblem
 		
 		grid[5][4].setTerminal(true);
 		grid[5][4].setValue(-100);
-		grid[4][4].setTerminal(true);
-		grid[4][4].setValue(100);
+		grid[0][4].setTerminal(true);
+		grid[0][4].setValue(100);
 		
 		intializeActions();
 	}
@@ -74,10 +74,10 @@ public class MarkovGridProblem implements MarkovProblem
 	{
 		MarkovGridAction action = new MarkovGridAction();
 		
-		MarkovActionResult up = new MarkovActionResult(get(x + 1, y));
-		MarkovActionResult down = new MarkovActionResult(get(x - 1, y));
+		MarkovActionResult up = new MarkovActionResult(get(x - 1, y));
+		MarkovActionResult down = new MarkovActionResult(get(x + 1, y));
 		MarkovActionResult left = new MarkovActionResult(get(x, y - 1));
-		MarkovActionResult right = new MarkovActionResult(get(x, y - 1));
+		MarkovActionResult right = new MarkovActionResult(get(x, y + 1));
 		
 		switch (direction)
 		{
@@ -145,6 +145,17 @@ public class MarkovGridProblem implements MarkovProblem
 		return action;
 	}
 	
+	public void calculatePolicy()
+	{
+		for (int y = 0; y < height; y++)
+		{
+			for (int x = 0; x < width; x++)
+			{
+				MarkovState state = get(x, y);
+			}
+		}
+	}
+	
 	private MarkovState get(int x, int y)
 	{
 		return grid[sanatizeY(y)][sanatizeX(x)];
@@ -169,10 +180,75 @@ public class MarkovGridProblem implements MarkovProblem
 		{
 			for (int x = 0; x < width; x++)
 			{
-				build += ((int) get(x, y).getValue()) + " ";
+				String buf = " ";
+				int size = 3;
+				if (get(x, y).getEstimatedValue() < 0)
+				{
+					size = 0;
+				}
+				for (double ev = Math.abs(get(x, y).getEstimatedValue() + 2); ev > 1; ev = ev / 10)
+				{
+					size--;
+				}
+				
+				for (int i = 0; i < size; i++)
+				{
+					buf += " ";
+				}
+				
+				build += buf + ((int) get(x, y).getEstimatedValue()) + " ";
 			}
 			build += "\n";
 		}
 		return build;
+	}
+	
+	public String getOptimalPath()
+	{
+		boolean[][] path = new boolean[height][width];
+		for (int y = 0; y < height; y++)
+		{
+			for (int x = 0; x < width; x++)
+			{
+				path[y][x] = false;
+			}
+			
+		}
+		
+		MarkovState currentState = getStartState();
+		
+		while (!currentState.isTerminal())
+		{
+			
+		}
+		
+		String build = "";
+		for (int y = 0; y < height; y++)
+		{
+			for (int x = 0; x < width; x++)
+			{
+				String buf = " ";
+				if (path[y][x])
+				{
+					build += "  O";
+				} else
+				{
+					
+				}
+				
+				build += buf + ((int) get(x, y).getEstimatedValue()) + " ";
+			}
+			build += "\n";
+		}
+		return build;
+		
+	}
+	
+	public void update()
+	{
+		for (MarkovState state : states)
+		{
+			state.update();
+		}
 	}
 }

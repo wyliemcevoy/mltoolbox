@@ -7,4 +7,6 @@ public interface MarkovProblem
 	public MarkovState getStartState();
 	
 	public List<MarkovState> getStates();
+	
+	public void update();
 }

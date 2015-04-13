@@ -1,5 +1,6 @@
 package com.ml.toolbox;
 
+import com.ml.toolbox.markov.internal.GridValueMaximization;
 import com.ml.toolbox.markov.internal.MarkovGridProblem;
 
 public class Main
@@ -9,8 +10,9 @@ public class Main
 	{
 		
 		MarkovGridProblem p = new MarkovGridProblem();
-		
-		System.out.println(p);
+		GridValueMaximization vm = new GridValueMaximization();
+		vm.accept(p);
+		vm.solve();
 		
 		/*
 		TravelingSalesmanProblem problem = new TravelingSalesmanProblem(100, 500, 500);

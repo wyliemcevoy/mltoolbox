@@ -7,11 +7,16 @@ public class MarkovState
 {
 	private boolean isTerminal;
 	private double value;
+	private double estimatedValue;
+	private double nextEstimatedValue;
 	private List<MarkovAction> actions;
+	private MarkovAction bestAction;
 	
 	public MarkovState(double value)
 	{
 		this.value = value;
+		this.estimatedValue = value;
+		this.nextEstimatedValue = value;
 		this.isTerminal = false;
 		this.actions = new ArrayList<MarkovAction>();
 	}
@@ -48,6 +53,7 @@ public class MarkovState
 	public void setValue(double value)
 	{
 		this.value = value;
+		this.estimatedValue = value;
 	}
 	
 	/**
@@ -61,6 +67,52 @@ public class MarkovState
 	public void addAction(MarkovAction action)
 	{
 		this.actions.add(action);
+	}
+	
+	/**
+	 * @return the estimatedValue
+	 */
+	public double getEstimatedValue()
+	{
+		return estimatedValue;
+	}
+	
+	/**
+	 * @param estimatedValue
+	 *            the estimatedValue to set
+	 */
+	public void setEstimatedValue(double estimatedValue)
+	{
+		this.estimatedValue = estimatedValue;
+	}
+	
+	/**
+	 * @return the nextEstimatedValue
+	 */
+	public double getNextEstimatedValue()
+	{
+		return nextEstimatedValue;
+	}
+	
+	/**
+	 * @param nextEstimatedValue
+	 *            the nextEstimatedValue to set
+	 */
+	public void setNextEstimatedValue(double nextEstimatedValue)
+	{
+		this.nextEstimatedValue = nextEstimatedValue;
+	}
+	
+	public void update()
+	{
+		
+		if (isTerminal)
+		{
+			this.estimatedValue = this.value;
+		} else
+		{
+			this.estimatedValue = nextEstimatedValue;
+		}
 	}
 	
 }
