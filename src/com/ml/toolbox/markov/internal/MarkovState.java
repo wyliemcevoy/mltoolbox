@@ -115,4 +115,36 @@ public class MarkovState
 		}
 	}
 	
+	/**
+	 * @return the bestAction
+	 */
+	public MarkovAction getBestAction()
+	{
+		return bestAction;
+	}
+	
+	/**
+	 * @param bestAction
+	 *            the bestAction to set
+	 */
+	public void calculateBestAction()
+	{
+		double bestActionValue = -1000000000;
+		
+		for (MarkovAction action : actions)
+		{
+			double actionValue = 0;
+			
+			for (MarkovActionResult result : action.getPossibleResults())
+			{
+				actionValue += result.getProbability() * result.getState().getEstimatedValue();
+			}
+			
+			if (actionValue > bestActionValue)
+			{
+				bestAction = action;
+				bestActionValue = actionValue;
+			}
+		}
+	}
 }

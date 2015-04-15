@@ -8,4 +8,5 @@ public interface MarkovAction
 	
 	public void addPossible(MarkovActionResult result);
 	
+	public String getName();
 }

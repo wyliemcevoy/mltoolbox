@@ -14,6 +14,8 @@ public class Main
 		vm.accept(p);
 		vm.solve();
 		
+		System.out.println(p.getPolicy());
+		
 		/*
 		TravelingSalesmanProblem problem = new TravelingSalesmanProblem(100, 500, 500);
 		System.out.println("problem : " + problem.toString());

@@ -2,6 +2,7 @@ package com.ml.toolbox.markov.internal;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class MarkovGridProblem implements MarkovProblem
 {
@@ -9,10 +10,11 @@ public class MarkovGridProblem implements MarkovProblem
 	private List<MarkovState> states;
 	private int width = 5;
 	private int height = 6;
+	private Random rand;
 	
 	public MarkovGridProblem()
 	{
-		
+		rand = new Random(1);
 		intializeGrid();
 	}
 	
@@ -72,16 +74,18 @@ public class MarkovGridProblem implements MarkovProblem
 	
 	private MarkovGridAction createAction(Direction direction, int x, int y)
 	{
-		MarkovGridAction action = new MarkovGridAction();
+		MarkovGridAction action = null;
 		
-		MarkovActionResult up = new MarkovActionResult(get(x - 1, y));
-		MarkovActionResult down = new MarkovActionResult(get(x + 1, y));
-		MarkovActionResult left = new MarkovActionResult(get(x, y - 1));
-		MarkovActionResult right = new MarkovActionResult(get(x, y + 1));
+		MarkovActionResult up = new MarkovActionResult(get(x, y - 1));
+		MarkovActionResult down = new MarkovActionResult(get(x, y + 1));
+		MarkovActionResult left = new MarkovActionResult(get(x - 1, y));
+		MarkovActionResult right = new MarkovActionResult(get(x + 1, y));
 		
 		switch (direction)
 		{
 			case down:
+				action = new MarkovGridAction("v");
+				
 				// go down
 				down.setProbability(.8);
 				action.addPossible(down);
@@ -97,6 +101,8 @@ public class MarkovGridProblem implements MarkovProblem
 				break;
 			case left:
 				
+				action = new MarkovGridAction("<");
+				
 				// go left
 				left.setProbability(.8);
 				action.addPossible(left);
@@ -111,6 +117,8 @@ public class MarkovGridProblem implements MarkovProblem
 				
 				break;
 			case right:
+				
+				action = new MarkovGridAction(">");
 				// go right
 				right.setProbability(.8);
 				action.addPossible(right);
@@ -125,6 +133,8 @@ public class MarkovGridProblem implements MarkovProblem
 				
 				break;
 			case up:
+				
+				action = new MarkovGridAction("^");
 				// go down
 				up.setProbability(.8);
 				action.addPossible(up);
@@ -197,6 +207,96 @@ public class MarkovGridProblem implements MarkovProblem
 				}
 				
 				build += buf + ((int) get(x, y).getEstimatedValue()) + " ";
+				
+			}
+			build += "\n";
+		}
+		return build;
+	}
+	
+	/*
+	public String getOptimalPath()
+	{
+		boolean[][] path = new boolean[height][width];
+		for (int y = 0; y < height; y++)
+		{
+			for (int x = 0; x < width; x++)
+			{
+				path[y][x] = false;
+			}
+			
+		}
+		
+		MarkovState currentState = getStartState();
+		
+		while (!currentState.isTerminal())
+		{
+			
+		}
+		
+		String build = "";
+		for (int y = 0; y < height; y++)
+		{
+			for (int x = 0; x < width; x++)
+			{
+				String buf = " ";
+				if (path[y][x])
+				{
+					build += "  O";
+				} else
+				{
+					
+				}
+				
+				build += buf + ((int) get(x, y).getEstimatedValue()) + " ";
+			}
+			build += "\n";
+		}
+		return build;
+		
+	}
+	*/
+	public void update()
+	{
+		for (MarkovState state : states)
+		{
+			state.update();
+		}
+	}
+	
+	public String getPolicy()
+	{
+		
+		String build = "";
+		for (int y = 0; y < height; y++)
+		{
+			for (int x = 0; x < width; x++)
+			{
+				String buf = " ";
+				int size = 3;
+				if (get(x, y).getEstimatedValue() < 0)
+				{
+					size = 0;
+				}
+				for (double ev = Math.abs(get(x, y).getEstimatedValue() + 2); ev > 1; ev = ev / 10)
+				{
+					size--;
+				}
+				
+				for (int i = 0; i < size; i++)
+				{
+					buf += " ";
+				}
+				
+				build += buf + ((int) get(x, y).getEstimatedValue()) + " ";
+				MarkovState state = get(x, y);
+				state.calculateBestAction();
+				if (state.getBestAction() != null)
+				{
+					
+					build += state.getBestAction().getName() + " ";
+					
+				}
 			}
 			build += "\n";
 		}
@@ -242,13 +342,5 @@ public class MarkovGridProblem implements MarkovProblem
 		}
 		return build;
 		
-	}
-	
-	public void update()
-	{
-		for (MarkovState state : states)
-		{
-			state.update();
-		}
 	}
 }

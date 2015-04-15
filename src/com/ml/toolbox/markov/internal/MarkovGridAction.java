@@ -6,10 +6,12 @@ import java.util.List;
 public class MarkovGridAction implements MarkovAction
 {
 	private List<MarkovActionResult> results;
+	private String name;
 	
-	public MarkovGridAction()
+	public MarkovGridAction(String name)
 	{
-		results = new ArrayList<MarkovActionResult>();
+		this.results = new ArrayList<MarkovActionResult>();
+		this.name = name;
 	}
 	
 	@Override
@@ -23,6 +25,23 @@ public class MarkovGridAction implements MarkovAction
 	{
 		results.add(result);
 		
+	}
+	
+	/**
+	 * @return the name
+	 */
+	public String getName()
+	{
+		return name;
+	}
+	
+	/**
+	 * @param name
+	 *            the name to set
+	 */
+	public void setName(String name)
+	{
+		this.name = name;
 	}
 	
 }
