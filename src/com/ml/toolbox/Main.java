@@ -1,7 +1,5 @@
 package com.ml.toolbox;
 
-import com.ml.toolbox.markov.internal.PolicyAgent;
-import com.ml.toolbox.markov.internal.ValueItteration;
 import com.ml.toolbox.markov.internal.MarkovGridProblem;
 
 public class Main
@@ -10,7 +8,26 @@ public class Main
 	public static void main(String[] args)
 	{
 		
-		MarkovGridProblem p = new MarkovGridProblem();
+		for (int i = 2; i < 50; i++)
+		{
+			MarkovGridProblem p = new MarkovGridProblem(i);
+			
+			ExperimentRunner runner = new ExperimentRunner();
+			
+			runner.accept(p);
+			runner.runExperiments();
+			//runner.printResults();
+			System.out.println(runner.csvResults());
+			
+		}
+		
+		/*
+		QLearningAgent pi = new QLearningAgent();
+		
+		pi.accept(p);
+		
+		pi.solve();
+		
 		ValueItteration vm = new ValueItteration();
 		vm.accept(p);
 		vm.solve();
@@ -26,7 +43,7 @@ public class Main
 			agent.reset();
 		}
 		
-		/*
+		
 		TravelingSalesmanProblem problem = new TravelingSalesmanProblem(100, 500, 500);
 		System.out.println("problem : " + problem.toString());
 		
@@ -47,5 +64,4 @@ public class Main
 		}
 		*/
 	}
-	
 }

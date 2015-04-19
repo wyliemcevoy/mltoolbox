@@ -2,14 +2,14 @@ package com.ml.toolbox.markov.internal;
 
 public class PolicyAgent
 {
-	private int maxNumActions = 100;
-	private MarkovGridProblem problem;
+	private int maxNumActions = 1000;
+	private MarkovProblem problem;
 	private double score;
 	private int usedActions;
 	private String path;
 	private ActionExecuter executer;
 	
-	public PolicyAgent(MarkovGridProblem problem)
+	public PolicyAgent(MarkovProblem problem)
 	{
 		super();
 		this.problem = problem;

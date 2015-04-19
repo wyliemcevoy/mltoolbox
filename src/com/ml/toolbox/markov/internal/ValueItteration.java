@@ -1,10 +1,11 @@
 package com.ml.toolbox.markov.internal;
 
-public class ValueItteration
+public class ValueItteration implements MarkovProblemSolver
 {
 	private MarkovProblem problem;
-	private double gamma = .9;
-	private static final int maxItterations = 100;
+	private double gamma = .99;
+	private static final int maxItterations = 1000;
+	private int itterations;
 	
 	public void accept(MarkovProblem problem)
 	{
@@ -50,13 +51,17 @@ public class ValueItteration
 			}
 			
 			problem.update();
-			
-			System.out.println("[  itteration = " + i + "    delta = " + delta + "   ]");
-			System.out.println(problem);
+			itterations = i;
 			if (delta == 0)
 			{
 				break;
 			}
 		}
+	}
+	
+	@Override
+	public int getNumberOfItterations()
+	{
+		return itterations;
 	}
 }

@@ -171,4 +171,10 @@ public class MarkovState
 		this.policy = policy;
 		
 	}
+	
+	public void reset()
+	{
+		this.estimatedValue = value;
+		this.nextEstimatedValue = value;
+	}
 }

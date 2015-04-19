@@ -9,4 +9,12 @@ public interface MarkovProblem
 	public List<MarkovState> getStates();
 	
 	public void update();
+	
+	public MarkovState getState(int i);
+	
+	public String getPolicyAsString();
+	
+	public void calculatePolicy();
+	
+	public void reset();
 }

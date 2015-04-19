@@ -2,18 +2,20 @@ package com.ml.toolbox.markov.internal;
 
 import java.util.Random;
 
-public class PolicyItteration
+public class PolicyItteration implements MarkovProblemSolver
 {
 	private MarkovProblem problem;
 	private double gamma = .9;
-	private static final int maxItterations = 100;
+	private static final int maxItterations = 1000;
 	private Random rand;
+	private int itterations;
 	
 	public PolicyItteration()
 	{
 		rand = new Random(System.currentTimeMillis());
 	}
 	
+	@Override
 	public void accept(MarkovProblem problem)
 	{
 		this.problem = problem;
@@ -29,13 +31,98 @@ public class PolicyItteration
 		
 	}
 	
+	@Override
 	public void solve()
 	{
 		randomPolicy();
 		int n = problem.getStates().size();
 		
-		double[][] mat = new double[n][n];
+		boolean policyHasChanged = true;
+		int currentItterations = 0;
+		double delta = 0;
 		
+		while (policyHasChanged && currentItterations < maxItterations)
+		{
+			policyHasChanged = false;
+			currentItterations++;
+			
+			double[][] mat = new double[n][n];
+			double[][] constants = new double[n][1];
+			
+			for (int i = 0; i < n; i++)
+			{
+				for (int j = 0; j < n; j++)
+				{
+					mat[j][i] = 0;
+				}
+				constants[i][0] = 0;
+			}
+			
+			// build matrix 
+			for (MarkovState state : problem.getStates())
+			{
+				int index = state.getIndex();
+				
+				MarkovAction action = state.getPolicy();
+				
+				mat[index][index] = -1;
+				if (!state.isTerminal())
+				{
+					for (MarkovActionResult result : state.getPolicy().getPossibleResults())
+					{
+						int possibleIndex = result.getState().getIndex();
+						mat[index][possibleIndex] += gamma * result.getProbability();
+					}
+				}
+				constants[index][0] = -1 * state.getValue();
+			}
+			
+			// solve matrix
+			double[][] solution = MatrixSolver.solve(mat, constants);
+			
+			for (int index = 0; index < n; index++)
+			{
+				//System.out.println(solution[index][0] + " ");
+				MarkovState state = problem.getState(index);
+				
+				if (!state.isTerminal())
+				{
+					double oldValue = state.getEstimatedValue();
+					double newValue = solution[index][0];
+					
+					delta += Math.abs(oldValue - newValue);
+					state.setEstimatedValue(newValue);
+				}
+			}
+			
+			for (int index = 0; index < n; index++)
+			{
+				MarkovAction oldAction = problem.getState(index).getPolicy();
+				// calculate new action
+				problem.getState(index).calculatePolicy();
+				MarkovAction newAction = problem.getState(index).getPolicy();
+				
+				if (newAction != oldAction)
+				{
+					policyHasChanged = true;
+				}
+			}
+			
+			if (delta < .001)
+			{
+				policyHasChanged = false;
+			} else
+			{
+				policyHasChanged = true;
+			}
+			delta = 0;
+			
+			//System.out.println("[ policy itteration : " + currentItterations + " ]");
+			//System.out.println(problem.getPolicyAsString() + "\n");
+		}
+		
+		itterations = currentItterations;
+		/*
 		for (int i = 0; i < maxItterations; i++)
 		{
 			int delta = 0;
@@ -80,5 +167,13 @@ public class PolicyItteration
 				break;
 			}
 		}
+		
+		*/
+	}
+	
+	@Override
+	public int getNumberOfItterations()
+	{
+		return itterations;
 	}
 }

@@ -2,19 +2,25 @@ package com.ml.toolbox.markov.internal;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class MarkovGridProblem implements MarkovProblem
 {
 	private MarkovState[][] grid;
 	private ArrayList<MarkovState> states;
-	private int width = 5;
-	private int height = 6;
-	private Random rand;
+	private int width = 10;
+	private int height = 12;
+	
+	public MarkovGridProblem(int i)
+	{
+		
+		this.width = i;
+		this.height = i;
+		
+		intializeGrid();
+	}
 	
 	public MarkovGridProblem()
 	{
-		rand = new Random(1);
 		intializeGrid();
 	}
 	
@@ -34,10 +40,10 @@ public class MarkovGridProblem implements MarkovProblem
 			}
 		}
 		
-		grid[5][4].setTerminal(true);
-		grid[5][4].setValue(-100);
-		grid[0][4].setTerminal(true);
-		grid[0][4].setValue(100);
+		grid[height / 2 - 1][width / 2 - 1].setTerminal(true);
+		grid[height / 2 - 1][width / 2 - 1].setValue(-100);
+		grid[height - 1][width - 1].setTerminal(true);
+		grid[height - 1][width - 1].setValue(100);
 		
 		intializeActions();
 	}
@@ -181,23 +187,17 @@ public class MarkovGridProblem implements MarkovProblem
 		{
 			for (int x = 0; x < width; x++)
 			{
+				String num = "" + ((int) get(x, y).getEstimatedValue());
+				
 				String buf = " ";
-				int size = 3;
-				if (get(x, y).getEstimatedValue() < 0)
-				{
-					size = 0;
-				}
-				for (double ev = Math.abs(get(x, y).getEstimatedValue() + 2); ev > 1; ev = ev / 10)
-				{
-					size--;
-				}
+				int size = 7 - num.length();
 				
 				for (int i = 0; i < size; i++)
 				{
 					buf += " ";
 				}
 				
-				build += buf + ((int) get(x, y).getEstimatedValue()) + " ";
+				build += buf + num + " ";
 				
 			}
 			build += "\n";
@@ -255,7 +255,17 @@ public class MarkovGridProblem implements MarkovProblem
 		}
 	}
 	
-	public String getPolicy()
+	@Override
+	public void calculatePolicy()
+	{
+		for (MarkovState state : states)
+		{
+			state.calculatePolicy();
+		}
+	}
+	
+	@Override
+	public String getPolicyAsString()
 	{
 		
 		String build = "";
@@ -263,23 +273,17 @@ public class MarkovGridProblem implements MarkovProblem
 		{
 			for (int x = 0; x < width; x++)
 			{
+				String num = "" + ((int) get(x, y).getEstimatedValue());
+				
 				String buf = " ";
-				int size = 3;
-				if (get(x, y).getEstimatedValue() < 0)
-				{
-					size = 0;
-				}
-				for (double ev = Math.abs(get(x, y).getEstimatedValue() + 2); ev > 1; ev = ev / 10)
-				{
-					size--;
-				}
+				int size = 4 - num.length();
 				
 				for (int i = 0; i < size; i++)
 				{
 					buf += " ";
 				}
 				
-				build += buf + ((int) get(x, y).getEstimatedValue()) + " ";
+				build += buf + num + " ";
 				MarkovState state = get(x, y);
 				state.calculatePolicy();
 				if (state.getPolicy() != null)
@@ -332,6 +336,22 @@ public class MarkovGridProblem implements MarkovProblem
 			build += "\n";
 		}
 		return build;
+	}
+	
+	@Override
+	public MarkovState getState(int i)
+	{
+		return states.get(i);
+	}
+	
+	@Override
+	public void reset()
+	{
+		for (MarkovState state : states)
+		{
+			state.reset();
+		}
+		
 	}
 	
 }
