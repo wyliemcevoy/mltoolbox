@@ -1,6 +1,6 @@
 package com.ml.toolbox.markov.internal;
 
-public class GridValueMaximization
+public class ValueItteration
 {
 	private MarkovProblem problem;
 	private double gamma = .9;
@@ -11,9 +11,8 @@ public class GridValueMaximization
 		this.problem = problem;
 	}
 	
-	public GridPolicy solve()
+	public void solve()
 	{
-		GridPolicy solution = new GridPolicy();
 		
 		for (int i = 0; i < maxItterations; i++)
 		{
@@ -59,6 +58,5 @@ public class GridValueMaximization
 				break;
 			}
 		}
-		return solution;
 	}
 }

@@ -7,7 +7,7 @@ import java.util.Random;
 public class MarkovGridProblem implements MarkovProblem
 {
 	private MarkovState[][] grid;
-	private List<MarkovState> states;
+	private ArrayList<MarkovState> states;
 	private int width = 5;
 	private int height = 6;
 	private Random rand;
@@ -22,13 +22,15 @@ public class MarkovGridProblem implements MarkovProblem
 	{
 		this.states = new ArrayList<MarkovState>();
 		this.grid = new MarkovState[height][width];
-		
+		int index = 0;
 		for (int y = 0; y < height; y++)
 		{
 			for (int x = 0; x < width; x++)
 			{
-				grid[y][x] = new MarkovState(0);
+				grid[y][x] = new MarkovState(index, 0);
+				grid[y][x].setValue(-1);
 				states.add(grid[y][x]);
+				index++;
 			}
 		}
 		
@@ -155,17 +157,6 @@ public class MarkovGridProblem implements MarkovProblem
 		return action;
 	}
 	
-	public void calculatePolicy()
-	{
-		for (int y = 0; y < height; y++)
-		{
-			for (int x = 0; x < width; x++)
-			{
-				MarkovState state = get(x, y);
-			}
-		}
-	}
-	
 	private MarkovState get(int x, int y)
 	{
 		return grid[sanatizeY(y)][sanatizeX(x)];
@@ -290,11 +281,11 @@ public class MarkovGridProblem implements MarkovProblem
 				
 				build += buf + ((int) get(x, y).getEstimatedValue()) + " ";
 				MarkovState state = get(x, y);
-				state.calculateBestAction();
-				if (state.getBestAction() != null)
+				state.calculatePolicy();
+				if (state.getPolicy() != null)
 				{
 					
-					build += state.getBestAction().getName() + " ";
+					build += state.getPolicy().getName() + " ";
 					
 				}
 			}
@@ -341,6 +332,6 @@ public class MarkovGridProblem implements MarkovProblem
 			build += "\n";
 		}
 		return build;
-		
 	}
+	
 }

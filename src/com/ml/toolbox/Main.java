@@ -1,6 +1,7 @@
 package com.ml.toolbox;
 
-import com.ml.toolbox.markov.internal.GridValueMaximization;
+import com.ml.toolbox.markov.internal.PolicyAgent;
+import com.ml.toolbox.markov.internal.ValueItteration;
 import com.ml.toolbox.markov.internal.MarkovGridProblem;
 
 public class Main
@@ -10,11 +11,20 @@ public class Main
 	{
 		
 		MarkovGridProblem p = new MarkovGridProblem();
-		GridValueMaximization vm = new GridValueMaximization();
+		ValueItteration vm = new ValueItteration();
 		vm.accept(p);
 		vm.solve();
 		
 		System.out.println(p.getPolicy());
+		
+		PolicyAgent agent = new PolicyAgent(p);
+		
+		for (int i = 0; i < 20; i++)
+		{
+			agent.runPolicy();
+			System.out.println(agent.getResultString());
+			agent.reset();
+		}
 		
 		/*
 		TravelingSalesmanProblem problem = new TravelingSalesmanProblem(100, 500, 500);

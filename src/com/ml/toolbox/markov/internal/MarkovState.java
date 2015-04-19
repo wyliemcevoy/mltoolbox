@@ -1,7 +1,6 @@
 package com.ml.toolbox.markov.internal;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class MarkovState
 {
@@ -9,11 +8,13 @@ public class MarkovState
 	private double value;
 	private double estimatedValue;
 	private double nextEstimatedValue;
-	private List<MarkovAction> actions;
-	private MarkovAction bestAction;
+	private ArrayList<MarkovAction> actions;
+	private MarkovAction policy;
+	private int index;
 	
-	public MarkovState(double value)
+	public MarkovState(int index, double value)
 	{
+		this.index = index;
 		this.value = value;
 		this.estimatedValue = value;
 		this.nextEstimatedValue = value;
@@ -59,7 +60,7 @@ public class MarkovState
 	/**
 	 * @return the actions
 	 */
-	public List<MarkovAction> getActions()
+	public ArrayList<MarkovAction> getActions()
 	{
 		return actions;
 	}
@@ -118,16 +119,16 @@ public class MarkovState
 	/**
 	 * @return the bestAction
 	 */
-	public MarkovAction getBestAction()
+	public MarkovAction getPolicy()
 	{
-		return bestAction;
+		return policy;
 	}
 	
 	/**
-	 * @param bestAction
+	 * @param policy
 	 *            the bestAction to set
 	 */
-	public void calculateBestAction()
+	public void calculatePolicy()
 	{
 		double bestActionValue = -1000000000;
 		
@@ -142,9 +143,32 @@ public class MarkovState
 			
 			if (actionValue > bestActionValue)
 			{
-				bestAction = action;
+				policy = action;
 				bestActionValue = actionValue;
 			}
 		}
+	}
+	
+	/**
+	 * @return the index
+	 */
+	public int getIndex()
+	{
+		return index;
+	}
+	
+	/**
+	 * @param index
+	 *            the index to set
+	 */
+	public void setIndex(int index)
+	{
+		this.index = index;
+	}
+	
+	public void setPolicy(MarkovAction policy)
+	{
+		this.policy = policy;
+		
 	}
 }
