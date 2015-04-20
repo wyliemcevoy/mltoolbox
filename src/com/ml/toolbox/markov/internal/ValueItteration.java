@@ -3,7 +3,7 @@ package com.ml.toolbox.markov.internal;
 public class ValueItteration implements MarkovProblemSolver
 {
 	private MarkovProblem problem;
-	private double gamma = .99;
+	private double gamma = .9;
 	private static final int maxItterations = 1000;
 	private int itterations;
 	

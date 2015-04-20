@@ -190,7 +190,7 @@ public class MarkovGridProblem implements MarkovProblem
 				String num = "" + ((int) get(x, y).getEstimatedValue());
 				
 				String buf = " ";
-				int size = 7 - num.length();
+				int size = 4 - num.length();
 				
 				for (int i = 0; i < size; i++)
 				{

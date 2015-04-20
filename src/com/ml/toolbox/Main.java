@@ -1,5 +1,7 @@
 package com.ml.toolbox;
 
+import java.io.IOException;
+
 import com.ml.toolbox.markov.internal.MarkovGridProblem;
 
 public class Main
@@ -7,8 +9,9 @@ public class Main
 	
 	public static void main(String[] args)
 	{
+		MarkovGridProblem problem = new MarkovGridProblem(4);
 		
-		for (int i = 2; i < 50; i++)
+		for (int i = 7; i < 10; i++)
 		{
 			MarkovGridProblem p = new MarkovGridProblem(i);
 			
@@ -16,11 +19,18 @@ public class Main
 			
 			runner.accept(p);
 			runner.runExperiments();
-			//runner.printResults();
+			runner.printResults();
 			System.out.println(runner.csvResults());
 			
 		}
-		
+		try
+		{
+			System.in.read();
+		} catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		/*
 		QLearningAgent pi = new QLearningAgent();
 		
